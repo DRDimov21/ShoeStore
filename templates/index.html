@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded">
+    <h1 class="display-4">Добре дошли в ShoeStore! 👟</h1>
+    <p class="lead">Най-добрите обувки на едно място</p>
+    <hr class="my-4">
+    <p>Разгледайте нашата колекция от качествени обувки за всеки вкус и повод.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('catalog.view_catalog') }}">Разгледай каталога</a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">🛍️ Широк избор</h5>
+                <p class="card-text">Над 100 модела обувки от известни марки</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">🚚 Безплатна доставка</h5>
+                <p class="card-text">За поръчки над 100 лв. безплатна доставка</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">✓ Гаранция</h5>
+                <p class="card-text">2 години гаранция на всички продукти</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
