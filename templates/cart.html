@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>🛒 Вашата кошница</h2>
+
+{% if cart %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Продукт</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Общо</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
+            <tr>
+                <td>
+                    <strong>{{ item.product.name }}</strong><br>
+                    <small class="text-muted">Цвят: {{ item.product.color }}, Размер: {{ item.product.size }}</small>
+                </td>
+                <td>{{ "%.2f"|format(item.product.price) }} лв.</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ "%.2f"|format(item.product.price * item.quantity) }} лв.</td>
+                <td>
+                    <a href="{{ url_for('cart.remove_product_from_cart', product_id=item.product.id) }}" 
+                       class="btn btn-danger btn-sm">Премахни</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Обща сума: {{ "%.2f"|format(total) }} лв.</h4>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{{ url_for('catalog.view_catalog') }}" class="btn btn-secondary">Продължи пазаруването</a>
+        <a href="{{ url_for('cart.checkout') }}" class="btn btn-success">Поръчай</a>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <h4>Кошницата ви е празна</h4>
+    <p>Разгледайте нашите продукти и добавете нещо в кошницата.</p>
+    <a href="{{ url_for('catalog.view_catalog') }}" class="btn btn-primary">Разгледай каталога</a>
+</div>
+{% endif %}
+{% endblock %}
