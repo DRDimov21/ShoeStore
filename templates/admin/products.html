@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>📦 Управление на продукти</h2>
+
+<a href="{{ url_for('admin.add_product_page') }}" class="btn btn-success mb-3">➕ Добави нов продукт</a>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Име</th>
+                <th>Цвят</th>
+                <th>Размер</th>
+                <th>Цена</th>
+                <th>Наличност</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.color }}</td>
+                <td>{{ product.size }}</td>
+                <td>{{ "%.2f"|format(product.price) }} лв.</td>
+                <td>{{ product.stock }}</td>
+                <td>
+                    <a href="{{ url_for('admin.edit_product', product_id=product.id) }}" class="btn btn-warning btn-sm">✏️ Редактирай</a>
+                    <a href="{{ url_for('admin.delete_product_page', product_id=product.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Сигурни ли сте?')">🗑️ Изтрий</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
