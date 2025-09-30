@@ -1,45 +1,52 @@
-# Данни в паметта
-carts = {}
+from services.base_service import BaseService
 
 
-def get_cart(user_id):
-    return carts.get(user_id, [])
+class CartService(BaseService):
+    def __init__(self):
+        super().__init__()
+        self.carts = {}
+
+    def get_cart(self, user_id):
+        return self.carts.get(user_id, [])
+
+    def add_to_cart(self, user_id, product_id, quantity):
+
+        from services.catalog_service import catalog_service
+
+        product = catalog_service.get_by_id(product_id)
+        if not product or product.stock < quantity:
+            return False
+
+        if user_id not in self.carts:
+            self.carts[user_id] = []
 
 
-def add_to_cart(user_id, product_id, quantity):
-    from services.catalog_service import get_product_by_id
-
-    product = get_product_by_id(product_id)
-    if not product or product['stock'] < quantity:
-        return False
-
-    if user_id not in carts:
-        carts[user_id] = []
-
-    # Проверка дали продуктът вече е в кошницата
-    for item in carts[user_id]:
-        if item['product']['id'] == product_id:
-            item['quantity'] += quantity
-            return True
-
-    # Добавяне на нов продукт
-    carts[user_id].append({
-        'product': product,
-        'quantity': quantity
-    })
-    return True
+        for item in self.carts[user_id]:
+            if item['product']['id'] == product_id:
+                item['quantity'] += quantity
+                return True
 
 
-def remove_from_cart(user_id, product_id):
-    if user_id in carts:
-        carts[user_id] = [item for item in carts[user_id] if item['product']['id'] != product_id]
+        self.carts[user_id].append({
+            'product': product.to_dict(),
+            'quantity': quantity
+        })
+        return True
+
+    def remove_from_cart(self, user_id, product_id):
+        if user_id in self.carts:
+            self.carts[user_id] = [item for item in self.carts[user_id]
+                                   if item['product']['id'] != product_id]
+
+    def clear_cart(self, user_id):
+        if user_id in self.carts:
+            self.carts[user_id] = []
+
+    def get_cart_total(self, user_id):
+        cart = self.get_cart(user_id)
+        return sum(item['product']['price'] * item['quantity'] for item in cart)
 
 
-def clear_cart(user_id):
-    if user_id in carts:
-        carts[user_id] = []
 
+cart_service = CartService()
 
-def get_cart_total(user_id):
-    cart = get_cart(user_id)
-    return sum(item['product']['price'] * item['quantity'] for item in cart)

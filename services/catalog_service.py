@@ -1,106 +1,78 @@
-# Данни в паметта
-products = []
-next_product_id = 1
+from services.base_service import BaseService
+from models.product_model import Product
 
 
-def get_all_products():
-    return [p for p in products if p['stock'] > 0]
+class CatalogService(BaseService):
+    def __init__(self):
+        super().__init__()
+        self._initialize_sample_products()
+
+    def get_all(self):
+        return [p for p in self.items if p.stock > 0]
+
+    def add_product(self, name, description, color, size, price, stock):
+        product = Product(self._get_next_id(), name, description, color, size, price, stock)
+        self.items.append(product)
+        return product
+
+    def update_product(self, product_id, name, description, color, size, price, stock):
+        product = self.get_by_id(product_id)
+        if product:
+            product.name = name
+            product.description = description
+            product.color = color
+            product.size = size
+            product.price = price
+            product.stock = stock
+            return True
+        return False
+
+    def delete_product(self, product_id):
+        product = self.get_by_id(product_id)
+        if product:
+            self.items.remove(product)
+            return True
+        return False
+
+    def search_products(self, query):
+        query = query.lower()
+        return [p for p in self.items if
+                query in p.name.lower() or
+                query in p.color.lower() or
+                query in p.description.lower()]
+
+    def filter_products(self, products_list, color='', size='', max_price=''):
+        filtered = products_list
+
+        if color:
+            filtered = [p for p in filtered if p.color.lower() == color.lower()]
+
+        if size:
+            filtered = [p for p in filtered if p.size == size]
+
+        if max_price:
+            filtered = [p for p in filtered if p.price <= float(max_price)]
+
+        return filtered
+
+    def decrease_stock(self, product_id, quantity):
+        product = self.get_by_id(product_id)
+        if product:
+            return product.decrease_stock(quantity)
+        return False
+
+    def _initialize_sample_products(self):
+        sample_products = [
+            Product(self._get_next_id(), 'Nike Air Max', 'Спортни обувки за всеки ден',
+                    'черни', '42', 199.99, 10),
+            Product(self._get_next_id(), 'Adidas Ultraboost', 'Обувки за бягане',
+                    'бели', '43', 229.99, 8),
+            Product(self._get_next_id(), 'Vans Old Skool', 'Класически кецове',
+                    'черно-бели', '41', 89.99, 15)
+        ]
+
+        self.items.extend(sample_products)
 
 
-def get_product_by_id(product_id):
-    return next((p for p in products if p['id'] == product_id), None)
 
-
-def add_product(name, description, color, size, price, stock):
-    global next_product_id
-
-    product = {
-        'id': next_product_id,
-        'name': name,
-        'description': description,
-        'color': color,
-        'size': size,
-        'price': price,
-        'stock': stock
-    }
-
-    products.append(product)
-    next_product_id += 1
-    return product
-
-
-def update_product(product_id, name, description, color, size, price, stock):
-    product = get_product_by_id(product_id)
-    if product:
-        product.update({
-            'name': name,
-            'description': description,
-            'color': color,
-            'size': size,
-            'price': price,
-            'stock': stock
-        })
-        return True
-    return False
-
-
-def delete_product(product_id):
-    global products
-    products = [p for p in products if p['id'] != product_id]
-    return True
-
-
-def search_products(query):
-    query = query.lower()
-    return [p for p in products if
-            query in p['name'].lower() or
-            query in p['color'].lower() or
-            query in p['description'].lower()]
-
-
-def filter_products(products_list, color, size, max_price):
-    filtered = products_list
-
-    if color:
-        filtered = [p for p in filtered if p['color'].lower() == color.lower()]
-
-    if size:
-        filtered = [p for p in filtered if p['size'] == size]
-
-    if max_price:
-        filtered = [p for p in filtered if p['price'] <= float(max_price)]
-
-    return filtered
-
-
-def decrease_stock(product_id, quantity):
-    product = get_product_by_id(product_id)
-    if product and product['stock'] >= quantity:
-        product['stock'] -= quantity
-        return True
-    return False
-
-
-# Инициализация с примерни продукти
-def initialize_sample_products():
-    global next_product_id
-    sample_products = [
-        {
-            'id': next_product_id, 'name': 'Nike Air Max', 'description': 'Спортни обувки за всеки ден',
-            'color': 'черни', 'size': '42', 'price': 199.99, 'stock': 10
-        },
-        {
-            'id': next_product_id + 1, 'name': 'Adidas Ultraboost', 'description': 'Обувки за бягане',
-            'color': 'бели', 'size': '43', 'price': 229.99, 'stock': 8
-        },
-        {
-            'id': next_product_id + 2, 'name': 'Vans Old Skool', 'description': 'Класически кецове',
-            'color': 'черно-бели', 'size': '41', 'price': 89.99, 'stock': 15
-        }
-    ]
-
-    products.extend(sample_products)
-    next_product_id += 3
-
-
-initialize_sample_products()
+catalog_service = CatalogService()

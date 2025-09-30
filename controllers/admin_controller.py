@@ -1,7 +1,8 @@
 from flask import Blueprint, request, redirect, url_for, session, render_template, flash
-from services.catalog_service import add_product, update_product, delete_product, get_product_by_id
-from services.auth_service import get_all_users
-from services.order_service import get_all_orders
+from services.catalog_service import catalog_service
+from services.auth_service import auth_service
+from services.order_service import order_service
+from services.cart_service import cart_service
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -14,10 +15,9 @@ def require_admin():
 
 @admin_bp.route('/admin')
 def admin_dashboard():
-    users = get_all_users()
-    orders = get_all_orders()
-    from services.catalog_service import get_all_products
-    products = get_all_products()
+    users = auth_service.get_all()
+    orders = order_service.get_all()
+    products = catalog_service.get_all()
 
     return render_template('admin/dashboard.html',
                            users=users,
@@ -27,8 +27,7 @@ def admin_dashboard():
 
 @admin_bp.route('/admin/products')
 def manage_products():
-    from services.catalog_service import get_all_products
-    products = get_all_products()
+    products = catalog_service.get_all()
     return render_template('admin/products.html', products=products)
 
 
@@ -42,7 +41,7 @@ def add_product_page():
         price = float(request.form['price'])
         stock = int(request.form['stock'])
 
-        product = add_product(name, description, color, size, price, stock)
+        product = catalog_service.add_product(name, description, color, size, price, stock)
         if product:
             flash('Продуктът е добавен успешно!')
             return redirect(url_for('admin.manage_products'))
@@ -52,7 +51,7 @@ def add_product_page():
 
 @admin_bp.route('/admin/products/edit/<int:product_id>', methods=['GET', 'POST'])
 def edit_product(product_id):
-    product = get_product_by_id(product_id)
+    product = catalog_service.get_by_id(product_id)
     if not product:
         return "Продуктът не е намерен", 404
 
@@ -64,7 +63,7 @@ def edit_product(product_id):
         price = float(request.form['price'])
         stock = int(request.form['stock'])
 
-        if update_product(product_id, name, description, color, size, price, stock):
+        if catalog_service.update_product(product_id, name, description, color, size, price, stock):
             flash('Продуктът е обновен успешно!')
             return redirect(url_for('admin.manage_products'))
 
@@ -73,7 +72,7 @@ def edit_product(product_id):
 
 @admin_bp.route('/admin/products/delete/<int:product_id>')
 def delete_product_page(product_id):
-    if delete_product(product_id):
+    if catalog_service.delete_product(product_id):
         flash('Продуктът е изтрит успешно!')
     else:
         flash('Грешка при изтриване на продукта!')

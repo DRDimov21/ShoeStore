@@ -1,44 +1,42 @@
-# Данни в паметта
-orders = []
-next_order_id = 1
+from services.base_service import BaseService
+from models.order_model import Order
 
 
-def create_order(user_id, address, payment_method):
-    global next_order_id
-    from services.cart_service import get_cart
-    from services.catalog_service import decrease_stock
+class OrderService(BaseService):
+    def __init__(self):
+        super().__init__()
+        self.cart_service = None
+        self.catalog_service = None
 
-    cart = get_cart(user_id)
-    if not cart:
-        return None
+    def set_services(self, cart_service, catalog_service):
+        """Задаваме зависимостите след като всички services са създадени"""
+        self.cart_service = cart_service
+        self.catalog_service = catalog_service
 
-    # Проверка за наличност
-    for item in cart:
-        if not decrease_stock(item['product']['id'], item['quantity']):
+    def create_order(self, user_id, address, payment_method):
+        if not self.cart_service or not self.catalog_service:
             return None
 
-    order = {
-        'id': next_order_id,
-        'user_id': user_id,
-        'items': cart.copy(),
-        'address': address,
-        'payment_method': payment_method,
-        'total': sum(item['product']['price'] * item['quantity'] for item in cart),
-        'status': 'Обработва се'
-    }
-
-    orders.append(order)
-    next_order_id += 1
-    return order
+        cart_items = self.cart_service.get_cart(user_id)
+        if not cart_items:
+            return None
 
 
-def get_orders_by_user(user_id):
-    return [order for order in orders if order['user_id'] == user_id]
+        for item in cart_items:
+            if not self.catalog_service.decrease_stock(item['product']['id'], item['quantity']):
+                return None
+
+        order = Order(self._get_next_id(), user_id, cart_items, address, payment_method)
+        self.items.append(order)
 
 
-def get_all_orders():
-    return orders
+        self.cart_service.clear_cart(user_id)
+
+        return order
+
+    def get_orders_by_user(self, user_id):
+        return [order for order in self.items if order.user_id == user_id]
 
 
-def get_order_by_id(order_id):
-    return next((order for order in orders if order['id'] == order_id), None)
+
+order_service = OrderService()
