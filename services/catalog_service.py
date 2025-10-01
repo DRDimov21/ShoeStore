@@ -8,7 +8,7 @@ class CatalogService(BaseService):
         self._initialize_sample_products()
 
     def get_all(self):
-        return [p for p in self.items if p.stock > 0]
+        return [p for p in self.items if p.get_total_stock() > 0]
 
     def add_product(self, name, description, color, size, price, stock):
         product = Product(self._get_next_id(), name, description, color, size, price, stock)
@@ -55,23 +55,24 @@ class CatalogService(BaseService):
 
         return filtered
 
-    def decrease_stock(self, product_id, quantity):
+    def decrease_stock(self, product_id, size, quantity):
         product = self.get_by_id(product_id)
         if product:
-            return product.decrease_stock(quantity)
+            return product.decrease_stock(size,quantity)
         return False
 
     def _initialize_sample_products(self):
         sample_products = [
             Product(self._get_next_id(), 'Nike Air Max', 'Спортни обувки за всеки ден',
-                    'черни', '42', 199.99, 10),
+                    'черни',["38", "39", "40", "41", "42", "43", "44", "45"], 199.99, 10),
             Product(self._get_next_id(), 'Adidas Ultraboost', 'Обувки за бягане',
-                    'бели', '43', 229.99, 8),
-            Product(self._get_next_id(), 'Vans Old Skool', 'Класически кецове',
-                    'черно-бели', '41', 89.99, 15)
+                    'бели', ["38", "39", "40", "41", "42", "43", "44", "45"], 229.99, 8),
+            Product(self._get_next_id(), 'Vans Old School', 'Класически кецове',
+                    'черно-бели', ["38", "39", "40", "41", "42", "43", "44", "45"], 89.99, 15)
         ]
 
         self.items.extend(sample_products)
+
 
 
 

@@ -37,7 +37,7 @@
             <div class="card-body">
                 {% for item in cart %}
                 <div class="d-flex justify-content-between mb-2">
-                    <span>{{ item.product.name }} x{{ item.quantity }}</span>
+                    <span>{{ item.product.name }} (Размер: {{ item.size }} x{{ item.quantity }}</span>
                     <span>{{ "%.2f"|format(item.product.price * item.quantity) }} лв.</span>
                 </div>
                 {% endfor %}

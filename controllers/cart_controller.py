@@ -24,6 +24,8 @@ def add_product_to_cart(product_id):
 
     user_id = session['user_id']
     quantity = int(request.form.get('quantity', 1))
+    size = request.form.get('size')
+
 
     if cart_service.add_to_cart(user_id, product_id, quantity):
         flash('Продуктът е добавен в кошницата!')

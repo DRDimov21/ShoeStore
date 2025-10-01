@@ -23,7 +23,7 @@ class OrderService(BaseService):
 
 
         for item in cart_items:
-            if not self.catalog_service.decrease_stock(item['product']['id'], item['quantity']):
+            if not self.catalog_service.decrease_stock(item['product']['id'], item['size'],item['quantity']):
                 return None
 
         order = Order(self._get_next_id(), user_id, cart_items, address, payment_method)

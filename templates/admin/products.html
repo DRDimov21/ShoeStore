@@ -24,9 +24,11 @@
                 <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
                 <td>{{ product.color }}</td>
-                <td>{{ product.size }}</td>
+                <td>{% for size, stock in product.sizes_stock.items() %}
+                    {{ size }}({{ stock }})
+                    {% endfor %}</td>
                 <td>{{ "%.2f"|format(product.price) }} лв.</td>
-                <td>{{ product.stock }}</td>
+                <td>{{ product.get_total_stock() }}</td>
                 <td>
                     <a href="{{ url_for('admin.edit_product', product_id=product.id) }}" class="btn btn-warning btn-sm">✏️ Редактирай</a>
                     <a href="{{ url_for('admin.delete_product_page', product_id=product.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Сигурни ли сте?')">🗑️ Изтрий</a>

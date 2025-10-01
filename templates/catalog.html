@@ -44,7 +44,10 @@
                         <p class="card-text">{{ product.description }}</p>
                         <ul class="list-unstyled">
                             <li><strong>Цвят:</strong> {{ product.color }}</li>
-                            <li><strong>Размер:</strong> {{ product.size }}</li>
+                            <li><strong>Налични размери:</strong>
+                                {% for size, stock in product.sizes_stock.items() if stock > 0 %}
+                                    <span class = "badge bg-secondary">{{ size }}</span>
+                                    {% endfor %}</li>
                             <li><strong>Цена:</strong> {{ "%.2f"|format(product.price) }} лв.</li>
                             <li><strong>Наличност:</strong> {{ product.stock }} бр.</li>
                         </ul>
@@ -52,7 +55,15 @@
                     <div class="card-footer">
                         {% if session.user_id %}
                         <form method="POST" action="{{ url_for('cart.add_product_to_cart', product_id=product.id) }}">
-                            <div class="input-group">
+                            <div class="input-row g-2">
+                                <div class ="col-md-6">
+                                    <select name="size" class="form-select" required>
+                                        <option value="">Изберете размер</option>
+                                        {% for size, stock in product.sizes_stock.items() if stock > 0 %}
+                                            <option value="{{ size }}">Размер {{ size }} ({{ stock }} бр.)</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                                 <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control">
                                 <button type="submit" class="btn btn-success">Добави</button>
                             </div>

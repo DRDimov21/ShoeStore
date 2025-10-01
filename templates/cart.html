@@ -20,13 +20,13 @@
             <tr>
                 <td>
                     <strong>{{ item.product.name }}</strong><br>
-                    <small class="text-muted">Цвят: {{ item.product.color }}, Размер: {{ item.product.size }}</small>
+                    <small class="text-muted">Цвят: {{ item.product.color }}, Размер: {{ item.size }}</small>
                 </td>
                 <td>{{ "%.2f"|format(item.product.price) }} лв.</td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ "%.2f"|format(item.product.price * item.quantity) }} лв.</td>
                 <td>
-                    <a href="{{ url_for('cart.remove_product_from_cart', product_id=item.product.id) }}" 
+                    <a href="{{ url_for('cart.remove_product_from_cart', product_id=item.product.id) }}?size={{ item.size }}"
                        class="btn btn-danger btn-sm">Премахни</a>
                 </td>
             </tr>

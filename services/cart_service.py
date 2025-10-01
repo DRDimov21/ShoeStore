@@ -9,7 +9,7 @@ class CartService(BaseService):
     def get_cart(self, user_id):
         return self.carts.get(user_id, [])
 
-    def add_to_cart(self, user_id, product_id, quantity):
+    def add_to_cart(self, user_id, product_id,size, quantity):
 
         from services.catalog_service import catalog_service
 
@@ -17,18 +17,22 @@ class CartService(BaseService):
         if not product or product.stock < quantity:
             return False
 
+        if size not in product.sizes_stock or product.sizes_stock[size] < quantity:
+            return False
+
         if user_id not in self.carts:
             self.carts[user_id] = []
 
 
         for item in self.carts[user_id]:
-            if item['product']['id'] == product_id:
+            if item['product']['id'] == product_id and item['size'] == size:
                 item['quantity'] += quantity
                 return True
 
 
         self.carts[user_id].append({
             'product': product.to_dict(),
+            'size': size,
             'quantity': quantity
         })
         return True
