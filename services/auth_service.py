@@ -25,5 +25,5 @@ class AuthService(BaseService):
         self.items.append(admin_user)
 
 
-# Singleton instance
+
 auth_service = AuthService()

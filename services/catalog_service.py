@@ -77,5 +77,4 @@ class CatalogService(BaseService):
 
 
 
-
 catalog_service = CatalogService()

@@ -13,11 +13,9 @@ def register():
 
         user = auth_service.register_user(email, password, name)
         if user:
-            session['user_id'] = user.id
-            session['user_email'] = user.email
-            session['is_admin'] = user.is_admin
             print(f"✅ Регистриран нов потребител: {email}")
-            return redirect(url_for('catalog.view_catalog'))
+            flash('Регистрацията е успешна! Моля, влезте в профила си.')
+            return redirect(url_for('auth.login'))
         else:
             flash('Вече има регистриран потребител с този email!')
 
@@ -34,6 +32,7 @@ def login():
         if user:
             session['user_id'] = user.id
             session['user_email'] = user.email
+            session['user_name'] = user.name
             session['is_admin'] = user.is_admin
             return redirect(url_for('catalog.view_catalog'))
         else:

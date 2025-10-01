@@ -68,7 +68,7 @@
                             <div class="input-row g-2">
                                 <div class ="col-md-6">
                                     <select name="size" class="form-select" required>
-                                        <option value="">Изберете размер</option>
+                                        <option value="">Размер</option>
                                         {% for size, stock in product.sizes_stock.items() if stock > 0 %}
                                             <option value="{{ size }}">Размер {{ size }} ({{ stock }} бр.)</option>
                                         {% endfor %}
