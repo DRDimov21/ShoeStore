@@ -9,7 +9,6 @@ class OrderService(BaseService):
         self.catalog_service = None
 
     def set_services(self, cart_service, catalog_service):
-        """Задаваме зависимостите след като всички services са създадени"""
         self.cart_service = cart_service
         self.catalog_service = catalog_service
 

@@ -18,9 +18,20 @@
                         <input type="text" class="form-control" name="color" placeholder="черни, бели...">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Размер</label>
-                        <input type="text" class="form-control" name="size" placeholder="42, 43...">
-                    </div>
+    <label class="form-label">Размер</label>
+    <select name="size" class="form-control">
+        <option value="">Всички размери</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+    </select>
+</div>
                     <div class="mb-3">
                         <label class="form-label">Макс. цена</label>
                         <input type="number" class="form-control" name="max_price" placeholder="200">
@@ -49,7 +60,6 @@
                                     <span class = "badge bg-secondary">{{ size }}</span>
                                     {% endfor %}</li>
                             <li><strong>Цена:</strong> {{ "%.2f"|format(product.price) }} лв.</li>
-                            <li><strong>Наличност:</strong> {{ product.stock }} бр.</li>
                         </ul>
                     </div>
                     <div class="card-footer">

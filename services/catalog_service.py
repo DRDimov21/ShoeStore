@@ -48,10 +48,10 @@ class CatalogService(BaseService):
             filtered = [p for p in filtered if p.color.lower() == color.lower()]
 
         if size:
-            filtered = [p for p in filtered if p.size == size]
+            filtered = [p for p in filtered if size in p.sizes_stock and p.sizes_stock[size] > 0]
 
         if max_price:
-            filtered = [p for p in filtered if p.price <= float(max_price)]
+            filtered = [p for p in filtered if size in p.sizes_stock and p.sizes_stock[size] > 0]
 
         return filtered
 
@@ -64,11 +64,13 @@ class CatalogService(BaseService):
     def _initialize_sample_products(self):
         sample_products = [
             Product(self._get_next_id(), 'Nike Air Max', 'Спортни обувки за всеки ден',
-                    'черни',["38", "39", "40", "41", "42", "43", "44", "45"], 199.99, 10),
+                    'черни', {"38": 5, "39": 8, "40": 3, "41": 6, "42": 4, "43": 2}, 199.99,10),
+
             Product(self._get_next_id(), 'Adidas Ultraboost', 'Обувки за бягане',
-                    'бели', ["38", "39", "40", "41", "42", "43", "44", "45"], 229.99, 8),
-            Product(self._get_next_id(), 'Vans Old School', 'Класически кецове',
-                    'черно-бели', ["38", "39", "40", "41", "42", "43", "44", "45"], 89.99, 15)
+                    'бели',  {"39": 3, "40": 5, "41": 2, "42": 4, "43": 1},229.99,5),
+
+            Product(self._get_next_id(), 'Vans Old Skool', 'Класически кецове',
+                    'черно-бели', {"36": 4, "37": 3, "38": 6, "39": 2, "40": 5, "41": 3}, 89.99,4)
         ]
 
         self.items.extend(sample_products)

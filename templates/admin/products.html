@@ -24,9 +24,13 @@
                 <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
                 <td>{{ product.color }}</td>
-                <td>{% for size, stock in product.sizes_stock.items() %}
-                    {{ size }}({{ stock }})
-                    {% endfor %}</td>
+                <td>{% if product.sizes_stock is mapping %}
+                        {% for size, stock in product.sizes_stock.items() %}
+                            {{ size }}({{ stock }})
+                        {% endfor %}
+                    {% else %}
+                        {{ product.sizes_stock }}
+                    {% endif %}</td>
                 <td>{{ "%.2f"|format(product.price) }} лв.</td>
                 <td>{{ product.get_total_stock() }}</td>
                 <td>

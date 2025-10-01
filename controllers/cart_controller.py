@@ -27,7 +27,7 @@ def add_product_to_cart(product_id):
     size = request.form.get('size')
 
 
-    if cart_service.add_to_cart(user_id, product_id, quantity):
+    if cart_service.add_to_cart(user_id, product_id, size,quantity):
         flash('Продуктът е добавен в кошницата!')
     else:
         flash('Грешка при добавяне на продукта!')
