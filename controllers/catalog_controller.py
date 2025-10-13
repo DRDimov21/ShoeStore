@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, render_template, request, session, flash, redirect, url_for
 from services.catalog_service import catalog_service
 
 catalog_bp = Blueprint('catalog', __name__)
@@ -27,6 +27,9 @@ def view_catalog():
 @catalog_bp.route('/product/<int:product_id>')
 def product_detail(product_id):
     product = catalog_service.get_by_id(product_id)
-    if product:
-        return render_template('product_detail.html', product=product)
-    return "Продуктът не е намерен", 404
+
+    if not product:
+        flash('Продуктът не е намерен!')
+        return redirect(url_for('catalog.view_catalog'))
+
+    return render_template('product_detail.html', product=product)

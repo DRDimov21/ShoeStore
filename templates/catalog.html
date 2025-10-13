@@ -4,6 +4,7 @@
 <h2 class="mb-4">👟 Каталог с обувки</h2>
 
 <div class="row">
+
     <div class="col-md-3">
         <div class="card">
             <div class="card-header">
@@ -40,16 +41,23 @@
             {% for product in products %}
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 product-card">
-                    <div class="product-image-container" style="height: 250px; overflow: hidden; text-align: center; background: #f8f9fa;">
-                        <img src="{{ url_for('static', filename='images/products/' + product.image) }}"
-                             alt="{{ product.name }}"
-                             class="product-image"
-                             style="height: 100%; width: auto; object-fit: cover;"
-                             onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/products/default_shoe.jpg') }}'">
-                    </div>
+                    <a href="{{ url_for('catalog.product_detail', product_id=product.id) }}"
+                       style="text-decoration: none; color: inherit;">
+                        <div class="product-image-container" style="height: 250px; overflow: hidden; text-align: center; background: #f8f9fa;">
+                            <img src="{{ url_for('static', filename='images/products/' + product.image) }}"
+                                 alt="{{ product.name }}"
+                                 class="product-image"
+                                 style="height: 100%; width: auto; object-fit: cover;"
+                                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/products/default_shoe.jpg') }}'">
+                        </div>
+                    </a>
 
                     <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
+                        <a href="{{ url_for('catalog.product_detail', product_id=product.id) }}"
+                           style="text-decoration: none; color: inherit;">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                        </a>
+
                         <p class="card-text text-muted small">{{ product.description }}</p>
 
                         <div class="product-details">
@@ -93,7 +101,7 @@
                         </form>
                         {% else %}
                         <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary w-100">
-                            🔐 Влезте, за да купите
+                             Влезте, за да купите
                         </a>
                         {% endif %}
                     </div>
@@ -102,7 +110,7 @@
             {% else %}
             <div class="col-12">
                 <div class="alert alert-info text-center">
-                    <h4> Няма намерени обувки</h4>
+                    <h4>Няма намерени обувки</h4>
                     <p class="mb-0">Опитайте с други филтри или се върнете по-късно.</p>
                 </div>
             </div>

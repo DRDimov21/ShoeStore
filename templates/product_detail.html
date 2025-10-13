@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('catalog.view_catalog') }}">Каталог</a></li>
+                    <li class="breadcrumb-item active">{{ product.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="product-detail-image" style="text-align: center; background: #f8f9fa; padding: 20px;">
+                    <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
+                         alt="{{ product.name }}"
+                         class="img-fluid"
+                         style="max-height: 500px; width: auto;"
+                         onerror="this.src='{{ url_for('static', filename='images/products/default_shoe.jpg') }}'">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">{{ product.name }}</h1>
+                    <p class="text-muted">{{ product.description }}</p>
+                    
+                    <div class="product-price mb-3">
+                        <h2 class="text-success">{{ "%.2f"|format(product.price) }} лв.</h2>
+                    </div>
+
+                    <div class="product-specs mb-4">
+                        <h4> Характеристики</h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <strong>Цвят:</strong>
+                                <span class="badge bg-secondary">{{ product.color }}</span>
+                            </li>
+                            <li class="mb-2">
+                                <strong>Налични размери:</strong>
+                                <div class="mt-1">
+                                    {% if product.sizes_stock is mapping %}
+                                        {% for size, stock in product.sizes_stock.items() if stock > 0 %}
+                                        <span class="badge bg-primary me-1 mb-1" style="font-size: 1em;">
+                                            {{ size }} ({{ stock }} бр.)
+                                        </span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="badge bg-warning">Няма информация за размери</span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            <li class="mb-2">
+                                <strong>Обща наличност:</strong>
+                                <span class="badge bg-info">{{ product.get_total_stock() }} броя</span>
+                            </li>
+                            <li class="mb-2">
+                                <strong>Категория:</strong>
+                                <span class="badge bg-dark">
+                                    {% if 'nike' in product.name.lower() or 'adidas' in product.name.lower() or 'puma' in product.name.lower() %}
+                                        Спортни обувки
+                                    {% elif 'vans' in product.name.lower() or 'converse' in product.name.lower() %}
+                                        Кецове
+                                    {% elif 'boot' in product.name.lower() %}
+                                        Чизми
+                                    {% else %}
+                                        Обувки
+                                    {% endif %}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="add-to-cart-section">
+                        <h4>🛒 Добави в кошница</h4>
+                        {% if session.user_id %}
+                        <form method="POST" action="{{ url_for('cart.add_product_to_cart', product_id=product.id) }}">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-6">
+                                    <label for="size" class="form-label"><strong>Избери размер:</strong></label>
+                                    <select name="size" id="size" class="form-select" required>
+                                        <option value="">-- Изберете размер --</option>
+                                        {% if product.sizes_stock is mapping %}
+                                            {% for size, stock in product.sizes_stock.items() if stock > 0 %}
+                                            <option value="{{ size }}">Размер {{ size }} (останали {{ stock }} бр.)</option>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="quantity" class="form-label"><strong>Количество:</strong></label>
+                                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" 
+                                           class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label" style="visibility: hidden;">Бутон</label>
+                                    <button type="submit" class="btn btn-success w-100">
+                                        🛒 Добави
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <p>За да купите този продукт, моля <a href="{{ url_for('auth.login') }}">влезте в профила си</a> 
+                            или <a href="{{ url_for('auth.register') }}">се регистрирайте</a>.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-info mt-4">
+                        <h5>ℹ️ Допълнителна информация</h5>
+                        <div class="accordion" id="productAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                            data-bs-target="#deliveryInfo">
+                                        🚚 Доставка и връщане
+                                    </button>
+                                </h2>
+                                <div id="deliveryInfo" class="accordion-collapse collapse show" 
+                                     data-bs-parent="#productAccordion">
+                                    <div class="accordion-body">
+                                        <p>✅ Безплатна доставка за поръчки над 100 лв.</p>
+                                        <p>✅ Връщане в срок от 14 дни</p>
+                                        <p>✅ Доставка в рамките на 2-3 работни дни</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                            data-bs-target="#materialInfo">
+                                        Материали и грижа
+                                    </button>
+                                </h2>
+                                <div id="materialInfo" class="accordion-collapse collapse" 
+                                     data-bs-parent="#productAccordion">
+                                    <div class="accordion-body">
+                                        <p>• Висококачествени материали</p>
+                                        <p>• Подходящи за ежедневна употреба</p>
+                                        <p>• Препоръчителна грижа: Почистване с мека кърпа</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>👟 Подобни продукти</h3>
+            <div class="alert alert-info">
+                <p class="mb-0">Функционалността за подобни продукти ще бъде добавена скоро!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
