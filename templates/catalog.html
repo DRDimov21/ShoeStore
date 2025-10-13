@@ -1,42 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h2 class="mb-4">👟 Каталог с обувки</h2>
+
 <div class="row">
     <div class="col-md-3">
         <div class="card">
             <div class="card-header">
-                <h5>Филтри</h5>
+                <h5>🔍 Филтри</h5>
             </div>
             <div class="card-body">
                 <form method="GET">
                     <div class="mb-3">
                         <label class="form-label">Търсене</label>
-                        <input type="text" class="form-control" name="search" value="{{ search_query }}" placeholder="Име, цвят...">
+                        <input type="text" class="form-control" name="search" value="{{ search_query }}" placeholder="Име на обувка...">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Цвят</label>
                         <input type="text" class="form-control" name="color" placeholder="черни, бели...">
                     </div>
                     <div class="mb-3">
-    <label class="form-label">Размер</label>
-    <select name="size" class="form-control">
-        <option value="">Всички размери</option>
-        <option value="36">36</option>
-        <option value="37">37</option>
-        <option value="38">38</option>
-        <option value="39">39</option>
-        <option value="40">40</option>
-        <option value="41">41</option>
-        <option value="42">42</option>
-        <option value="43">43</option>
-        <option value="44">44</option>
-    </select>
-</div>
-                    <div class="mb-3">
-                        <label class="form-label">Макс. цена</label>
-                        <input type="number" class="form-control" name="max_price" placeholder="200">
+                        <label class="form-label">Размер</label>
+                        <select name="size" class="form-control">
+                            <option value="">Всички размери</option>
+                            {% for size in [36,37,38,39,40,41,42,43,44] %}
+                            <option value="{{ size }}">{{ size }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Филтрирай</button>
+                    <button type="submit" class="btn btn-primary w-100">Приложи филтри</button>
                     <a href="{{ url_for('catalog.view_catalog') }}" class="btn btn-secondary w-100 mt-2">Изчисти</a>
                 </form>
             </div>
@@ -44,49 +36,75 @@
     </div>
 
     <div class="col-md-9">
-        <h2>Каталог с обувки</h2>
-        
         <div class="row">
             {% for product in products %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 product-card">
+                    <div class="product-image-container" style="height: 250px; overflow: hidden; text-align: center; background: #f8f9fa;">
+                        <img src="{{ url_for('static', filename='images/products/' + product.image) }}"
+                             alt="{{ product.name }}"
+                             class="product-image"
+                             style="height: 100%; width: auto; object-fit: cover;"
+                             onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/products/default_shoe.jpg') }}'">
+                    </div>
+
                     <div class="card-body">
                         <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text">{{ product.description }}</p>
-                        <ul class="list-unstyled">
-                            <li><strong>Цвят:</strong> {{ product.color }}</li>
-                            <li><strong>Налични размери:</strong>
-                                {% for size, stock in product.sizes_stock.items() if stock > 0 %}
-                                    <span class = "badge bg-secondary">{{ size }}</span>
-                                    {% endfor %}</li>
-                            <li><strong>Цена:</strong> {{ "%.2f"|format(product.price) }} лв.</li>
-                        </ul>
+                        <p class="card-text text-muted small">{{ product.description }}</p>
+
+                        <div class="product-details">
+                            <p class="mb-1"><strong> Цвят:</strong> {{ product.color }}</p>
+                            <p class="mb-1"><strong> Цена:</strong> <span class="text-success">{{ "%.2f"|format(product.price) }} лв.</span></p>
+                            <p class="mb-1"><strong> Размери:</strong>
+                                {% if product.sizes_stock is mapping %}
+                                    {% for size, stock in product.sizes_stock.items() if stock > 0 %}
+                                    <span class="badge bg-primary">{{ size }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="badge bg-warning">Няма информация</span>
+                                {% endif %}
+                            </p>
+                        </div>
                     </div>
-                    <div class="card-footer">
+
+                    <div class="card-footer bg-white">
                         {% if session.user_id %}
                         <form method="POST" action="{{ url_for('cart.add_product_to_cart', product_id=product.id) }}">
-                            <div class="input-row g-2">
-                                <div class ="col-md-6">
-                                    <select name="size" class="form-select" required>
-                                        <option value="">Размер</option>
-                                        {% for size, stock in product.sizes_stock.items() if stock > 0 %}
-                                            <option value="{{ size }}">Размер {{ size }} ({{ stock }} бр.)</option>
-                                        {% endfor %}
+                            <div class="row g-2 align-items-center">
+                                <div class="col-6">
+                                    <select name="size" class="form-select form-select-sm" required>
+                                        <option value="">Избери размер</option>
+                                        {% if product.sizes_stock is mapping %}
+                                            {% for size, stock in product.sizes_stock.items() if stock > 0 %}
+                                            <option value="{{ size }}">Размер {{ size }}</option>
+                                            {% endfor %}
+                                        {% endif %}
                                     </select>
                                 </div>
-                                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control">
-                                <button type="submit" class="btn btn-success">Добави</button>
+                                <div class="col-4">
+                                    <input type="number" name="quantity" value="1" min="1" max="10" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-2">
+                                    <button type="submit" class="btn btn-success btn-sm w-100" title="Добави в кошница">
+                                        🛒
+                                    </button>
+                                </div>
                             </div>
                         </form>
                         {% else %}
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary w-100">Влезте, за да купите</a>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary w-100">
+                            🔐 Влезте, за да купите
+                        </a>
                         {% endif %}
                     </div>
                 </div>
             </div>
             {% else %}
             <div class="col-12">
-                <div class="alert alert-info">Няма намерени продукти.</div>
+                <div class="alert alert-info text-center">
+                    <h4> Няма намерени обувки</h4>
+                    <p class="mb-0">Опитайте с други филтри или се върнете по-късно.</p>
+                </div>
             </div>
             {% endfor %}
         </div>

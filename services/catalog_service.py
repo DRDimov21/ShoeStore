@@ -63,15 +63,18 @@ class CatalogService(BaseService):
 
     def _initialize_sample_products(self):
         sample_products = [
-            Product(self._get_next_id(), 'Nike Air Max', 'Спортни обувки за всеки ден',
-                    'черни', {"38": 5, "39": 8, "40": 3, "41": 6, "42": 4, "43": 2}, 199.99,10),
+            Product(self._get_next_id(), 'Nike Air Max 270', 'Удобни спортни обувки с въздушна подметка',
+                    'черни', 299.99, {"38": 5, "39": 8, "40": 3, "41": 6, "42": 4, "43": 2},
+                    'nike_air_max.jpg'),
 
-            Product(self._get_next_id(), 'Adidas Ultraboost', 'Обувки за бягане',
-                    'бели',  {"39": 3, "40": 5, "41": 2, "42": 4, "43": 1},229.99,5),
-
-            Product(self._get_next_id(), 'Vans Old Skool', 'Класически кецове',
-                    'черно-бели', {"36": 4, "37": 3, "38": 6, "39": 2, "40": 5, "41": 3}, 89.99,4)
+            Product(self._get_next_id(), 'Adidas Ultraboost 21', 'Обувки за бягане с Boost технология',
+                    'бели', 349.99, {"39": 3, "40": 5, "41": 2, "42": 4, "43": 1},
+                    'adidas_ultraboost.jpg'),
+            Product(self._get_next_id(), 'Vans Old Skool', 'Класически кецове с иконен дизайн',
+                    'черно-бели', 89.99, {"36": 4, "37": 3, "38": 6, "39": 2, "40": 5, "41": 3},
+                    'vans_oldskool.jpg'),
         ]
+
 
         self.items.extend(sample_products)
 

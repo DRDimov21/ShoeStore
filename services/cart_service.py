@@ -14,8 +14,6 @@ class CartService(BaseService):
         from services.catalog_service import catalog_service
 
         product = catalog_service.get_by_id(product_id)
-        if not product or product.stock < quantity:
-            return False
 
         if size not in product.sizes_stock or product.sizes_stock[size] < quantity:
             return False
@@ -37,10 +35,10 @@ class CartService(BaseService):
         })
         return True
 
-    def remove_from_cart(self, user_id, product_id):
+    def remove_from_cart(self, user_id, product_id, size):
         if user_id in self.carts:
             self.carts[user_id] = [item for item in self.carts[user_id]
-                                   if item['product']['id'] != product_id]
+                                   if not (item['product']['id'] == product_id and item['size'] == size)]
 
     def clear_cart(self, user_id):
         if user_id in self.carts:
