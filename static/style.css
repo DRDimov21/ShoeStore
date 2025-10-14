@@ -98,3 +98,58 @@
 .breadcrumb-item a:hover {
     color: #007bff;
 }
+/* Стилове за рейтинг системата */
+.star-rating {
+    display: inline-block;
+    font-size: 0;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-label {
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star-rating input:checked ~ .star-label,
+.star-rating input:hover ~ .star-label,
+.star-label:hover {
+    color: #ffc107;
+}
+
+.star-rating:hover .star-label {
+    color: #ffc107;
+}
+
+.star-rating .star-label:hover ~ .star-label {
+    color: #ddd;
+}
+
+/* Прогрес бар за рейтингите */
+.rating-progress {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.rating-progress-bar {
+    height: 100%;
+    background-color: #ffc107;
+    transition: width 0.3s ease;
+}
+
+/* Анимация за звезди */
+@keyframes star-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.star-label:hover {
+    animation: star-pop 0.3s ease;
+}

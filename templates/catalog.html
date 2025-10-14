@@ -72,6 +72,14 @@
                                     <span class="badge bg-warning">Няма информация</span>
                                 {% endif %}
                             </p>
+
+                            <!-- РЕЙТИНГЪТ Е ПРЕМЕСТЕН ТУКА -->
+                            <p class="mb-1 small">
+                                <strong>⭐ Рейтинг:</strong>
+                                {% set product_stats = rating_service.get_rating_stats(product.id) %}
+                                <span class="text-warning">{{ product_stats.average }}</span>
+                                <small class="text-muted">({{ product_stats.count }})</small>
+                            </p>
                         </div>
                     </div>
 
